@@ -12,7 +12,7 @@ public class Utils {
 	private final Scanner scanner;
 
 	public Utils(Scanner scanner) {
-		super();
+		super();	// once again, this is an odd usage, as this class doesn't inherit, is it calling on Object?
 		this.scanner = scanner;
 	}
 

@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DBUtils {
+public class DBUtils {  // TODO need to add the appropriate values to the vars below to connect to the database.
 
 	private static final Logger LOGGER = LogManager.getLogger();
 
