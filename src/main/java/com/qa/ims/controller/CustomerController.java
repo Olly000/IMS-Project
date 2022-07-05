@@ -21,7 +21,7 @@ public class CustomerController implements CrudController<Customer> {
 	private Utils utils;
 
 	public CustomerController(CustomerDAO customerDAO, Utils utils) {
-		super();  // why is this calling super, no vars present in CrudController interface...
+		super();
 		this.customerDAO = customerDAO;
 		this.utils = utils;
 	}
