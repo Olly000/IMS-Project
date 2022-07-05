@@ -1,7 +1,5 @@
 package com.qa.ims.persistence.domain;
 
-import jdk.vm.ci.meta.Local;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 
