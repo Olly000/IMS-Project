@@ -4,36 +4,36 @@ import java.util.Objects;
 
 public class Item {
 
-    private int id;
+    private Long id;
 
     private String name;
 
     private float cost;
 
-    private int number_in_stock;
+    private int numberInStock;
 
     // Constructor for retrieving items from the db
-    public Item(int id, String name, float cost, int number_in_stock) {
+    public Item(Long id, String name, float cost, int numberInStock) {
         this.id = id;
         this.name = name;
         this.cost = cost;
-        this.number_in_stock = number_in_stock;
+        this.numberInStock = numberInStock;
     }
 
     //Constructor for adding items to the db
-    public Item(String name, float cost, int number_in_stock) {
+    public Item(String name, float cost, int numberInStock) {
         this.name = name;
         this.cost = cost;
-        this.number_in_stock = number_in_stock;
+        this.numberInStock = numberInStock;
     }
 
     // Getters and setters
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -53,12 +53,12 @@ public class Item {
         this.cost = cost;
     }
 
-    public int getNumber_in_stock() {
-        return number_in_stock;
+    public int getNumberInStock() {
+        return numberInStock;
     }
 
-    public void setNumber_in_stock(int number_in_stock) {
-        this.number_in_stock = number_in_stock;
+    public void setNumberInStock(int numberInStock) {
+        this.numberInStock = numberInStock;
     }
 
 
@@ -68,12 +68,12 @@ public class Item {
         if (!(o instanceof Item)) return false;
         Item item = (Item) o;
         return getId() == item.getId() && Float.compare(item.getCost(), getCost()) == 0
-                && getNumber_in_stock() == item.getNumber_in_stock() && getName().equals(item.getName());
+                && getNumberInStock() == item.getNumberInStock() && getName().equals(item.getName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getCost(), getNumber_in_stock());
+        return Objects.hash(getId(), getName(), getCost(), getNumberInStock());
     }
 
     @Override
@@ -82,7 +82,7 @@ public class Item {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", cost=" + cost +
-                ", number_in_stock=" + number_in_stock +
+                ", numberInStock=" + numberInStock +
                 '}';
     }
 }
