@@ -35,14 +35,14 @@ public class OrderBasketDAO {
     }
 
 
-    public int create(Long orderID, Long itemID) {
+    public float createOneEntry(Long orderID, Long itemID) {
         try (Connection connection = DBUtils.getInstance().getConnection();
              PreparedStatement statement = connection
                      .prepareStatement("INSERT INTO order_basket(order_id, item_id) VALUES (?, ?)");) {
             statement.setLong(1, orderID);
             statement.setLong(2, itemID);
             statement.executeUpdate();
-            return 1;
+            return calculateTotal(orderID);
         } catch (Exception e) {
             LOGGER.debug(e);
             LOGGER.error(e.getMessage());
@@ -75,7 +75,7 @@ public class OrderBasketDAO {
 
     public boolean addItemsToOrder(Long orderID, Long itemID, int quantity) {
         for (int i = 0; i < quantity; i++) {
-            this.create(orderID, itemID);
+            createOneEntry(orderID, itemID);
         }
         return true;
     }

@@ -112,8 +112,8 @@ public class OrderDAO implements Dao<Order> {
 
 
     /**
-     * Updates order with index id in the database and returns the result
-     * @param order
+     * Updates the totalCost of the order with index id and returns the result
+     * @param order - the order to be updated
      * @return Order
      */
     @Override
@@ -121,8 +121,8 @@ public class OrderDAO implements Dao<Order> {
         try (Connection connection = DBUtils.getInstance().getConnection();
              PreparedStatement statement = connection
                      .prepareStatement(
-                             "UPDATE orders SET customer_id = ?  WHERE id = ?");) {
-            statement.setLong(1, order.getCustomerId());
+                             "UPDATE orders SET total_cost = ?  WHERE id = ?");) {
+            statement.setFloat(1, order.getTotalCost());
             statement.setLong(3, order.getId());
             statement.executeUpdate();
             return read(order.getId());

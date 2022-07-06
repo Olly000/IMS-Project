@@ -2,7 +2,6 @@ package com.qa.ims.controller;
 
 import com.qa.ims.persistence.dao.OrderBasketDAO;
 import com.qa.ims.persistence.dao.OrderDAO;
-import com.qa.ims.persistence.domain.Customer;
 import com.qa.ims.persistence.domain.Item;
 import com.qa.ims.persistence.domain.Order;
 import com.qa.ims.persistence.domain.OrderBasket;
@@ -10,9 +9,8 @@ import com.qa.ims.utils.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 public class OrderController implements CrudController<Order> {
 
@@ -64,39 +62,47 @@ public class OrderController implements CrudController<Order> {
         return order;
     }
 
+    private float addAnItem(Long orderID) {
+        LOGGER.info("Enter ID of item to add to order number " + orderID);
+        Long itemID = utils.getLong();
+        return basketDAO.createOneEntry(orderID, itemID);
+    }
 
-    private void updateChoice(Long orderId) {
-        String choice = "ASK";
-        while (!(choice.equals("ADD") || choice.equals("REMOVE"))) {
-            LOGGER.info("Would you like to add or remove an item (enter ADD or REMOVE");
-            choice = utils.getString().toUpperCase();
-        }
+    private float removeAnItem(Long orderID) {
+        LOGGER.info("Enter ID of item to remove from order number " + orderID);
+        Long itemID = utils.getLong();
+        return basketDAO.deleteItemFromOrder(orderID, itemID);
 
     }
+
+    private float updateChoice(Long orderId) {
+        Option choice = Option.getOption(utils);
+        if (choice == Option.ADD) {
+            return addAnItem(orderId);
+            } else if (choice == Option.REMOVE) {
+                return removeAnItem(orderId);
+            }
+        return 0;
+        }
 
     @Override
     public Order update() {
         LOGGER.info("Please enter the id of the order you want to update");
         Long orderId = utils.getLong();
-        LOGGER.info("Would you like to add or remove an item (enter ADD or REMOVE");
-        String choice = utils.getString().toUpperCase();
-        if (choice )
-
-
-        Order originalOrder = orderDAO.read(id);
-        float newCost = basketDAO.();
-        Order order = orderDAO.update(new Order(originalOrder.getCustomerId(), newCost));
+        Order originalOrder = orderDAO.read(orderId);
+        originalOrder.setTotalCost(updateChoice(orderId));
+        orderDAO.update(originalOrder);
         LOGGER.info("Order Updated");
-        return order;
+        return originalOrder;
     }
 
     @Override
     public int delete() {
         LOGGER.info("Please enter the id of the order you would like to delete");
-        Long id = utils.getLong();
-        orderDAO.delete(id);
-        basketDAO.deleteAllFromOrder(id);
-        LOGGER.info("Order number " + id + " has been deleted");
+        Long orderId = utils.getLong();
+        orderDAO.delete(orderId);
+        basketDAO.deleteAllFromOrder(orderId);
+        LOGGER.info("Order number " + orderId + " has been deleted");
         return 0;
 
 
