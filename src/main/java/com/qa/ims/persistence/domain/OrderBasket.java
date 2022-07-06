@@ -4,21 +4,21 @@ import java.util.Objects;
 
 public class OrderBasket {
 
-    private int id;
+    private Long id;
 
-    private int orderId;
+    private Long orderId;
 
-    private int itemId;
+    private Long itemId;
 
     // Constructor for retrieving data from the db
-    public OrderBasket(int id, int orderId, int itemId) {
+    public OrderBasket(Long id, Long orderId, Long itemId) {
         this.id = id;
         this.orderId = orderId;
         this.itemId = itemId;
     }
 
     // Constructor for creating/updating data - NB this will not be directly user facing
-    public OrderBasket(int orderId, int itemId) {
+    public OrderBasket(Long orderId, Long itemId) {
         this.orderId = orderId;
         this.itemId = itemId;
     }
@@ -26,28 +26,41 @@ public class OrderBasket {
 
     // Getters and setters
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public int getOrderId() {
+    public Long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(int orderId) {
+    public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
 
-    public int getItemId() {
+    public Long getItemId() {
         return itemId;
     }
 
-    public void setItemId(int itemId) {
+    public void setItemId(Long itemId) {
         this.itemId = itemId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OrderBasket)) return false;
+        OrderBasket that = (OrderBasket) o;
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getOrderId(), that.getOrderId()) && Objects.equals(getItemId(), that.getItemId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getOrderId(), getItemId());
     }
 
     @Override
@@ -57,18 +70,5 @@ public class OrderBasket {
                 ", orderId=" + orderId +
                 ", itemId=" + itemId +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof OrderBasket)) return false;
-        OrderBasket that = (OrderBasket) o;
-        return getId() == that.getId() && getOrderId() == that.getOrderId() && getItemId() == that.getItemId();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getOrderId(), getItemId());
     }
 }

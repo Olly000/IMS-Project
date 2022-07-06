@@ -29,15 +29,15 @@ public class ItemController implements CrudController<Item> {
 
     /**
      * Output all items to the logger
-     * @return List<Item> itemList
+     * @return List<Item>
       */
     @Override
     public List<Item> readAll() {
-        List<Item> itemList = itemDAO.readAll();
-        for (Item item: itemList) {
+        List<Item> items = itemDAO.readAll();
+        for (Item item : items) {
             LOGGER.info(item);
         }
-        return itemList;
+        return items;
     }
 
     /**

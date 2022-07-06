@@ -58,10 +58,15 @@ public class ItemDAO implements Dao<Item> {
         return new ArrayList<>();
     }
 
+    /**
+     * Reads the most recent item added to the database
+     * @return Item
+     */
     public Item readLatest() {
         try (Connection connection = DBUtils.getInstance().getConnection();
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM items ORDER BY id DESC LIMIT 1");) {
+             ResultSet resultSet =
+                     statement.executeQuery("SELECT * FROM items WHERE id = (SELECT MAX(id) FROM items);")) {
             resultSet.next();
             return modelFromResultSet(resultSet);
         } catch (Exception e) {
@@ -72,9 +77,10 @@ public class ItemDAO implements Dao<Item> {
     }
 
     /**
-     * Creates an item in the database
+     * Adds an item to the database and returns it when successful
      *
-     * @param item - takes in a customer object. id will be ignored
+     * @param item
+     * @return Item
      */
     @Override
     public Item create(Item item) {
@@ -93,6 +99,11 @@ public class ItemDAO implements Dao<Item> {
         return null;
     }
 
+    /**
+     * Returns item with index id
+     * @param id
+     * @return Item
+     */
     @Override
     public Item read(Long id) {
         try (Connection connection = DBUtils.getInstance().getConnection();
@@ -110,11 +121,10 @@ public class ItemDAO implements Dao<Item> {
     }
 
     /**
-     * Updates an item in the database
+     * Updates an item in the database and returns the result on success
      *
-     * @param item - takes in a customer object, the id field will be used to
-     *                 update that customer in the database
-     * @return
+     * @param item
+     * @return Item
      */
     @Override
     public Item update(Item item) {
@@ -136,9 +146,10 @@ public class ItemDAO implements Dao<Item> {
     }
 
     /**
-     * Deletes an item in the database
+     * Deletes item with index id from the database returns 0 on success
      *
-     * @param id - id of the item
+     * @param id
+     * @return 0
      */
     @Override
     public int delete(Long id) {
