@@ -38,7 +38,7 @@ public class Item {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -67,8 +67,8 @@ public class Item {
         if (this == o) return true;
         if (!(o instanceof Item)) return false;
         Item item = (Item) o;
-        return getId() == item.getId() && Float.compare(item.getCost(), getCost()) == 0
-                && getNumberInStock() == item.getNumberInStock() && getName().equals(item.getName());
+        return Float.compare(item.getCost(), getCost()) == 0 && getNumberInStock() == item.getNumberInStock()
+                && Objects.equals(getId(), item.getId()) && Objects.equals(getName(), item.getName());
     }
 
     @Override
