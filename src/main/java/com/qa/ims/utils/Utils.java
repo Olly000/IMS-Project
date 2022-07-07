@@ -52,4 +52,32 @@ public class Utils {
 		return doubleInput;
 	}
 
+	// TODO - make sure you write tests for these two methods
+	public int getInt() {
+		String input = null;
+		Integer intInput = null;
+		do {
+			try {
+				input = getString();
+				intInput = Integer.parseInt(input);
+			} catch (NumberFormatException nfe) {
+				LOGGER.info("Error - Please enter a number");
+			}
+		} while (intInput == null);
+		return intInput;
+	}
+
+	public float getFloat() {
+		String input = null;
+		Float floatInput = null;
+		do {
+			try {
+				input = getString();
+				floatInput = Float.parseFloat(input);
+			} catch (NumberFormatException nfe) {
+				LOGGER.info("Error - Please enter a number");
+			}
+		} while (floatInput == null);
+		return floatInput;
+	}
 }
