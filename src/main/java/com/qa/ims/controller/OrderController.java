@@ -1,12 +1,15 @@
 package com.qa.ims.controller;
 
+import com.qa.ims.persistence.dao.JoinedOrderDAO;
 import com.qa.ims.persistence.dao.OrderBasketDAO;
 import com.qa.ims.persistence.dao.OrderDAO;
+import com.qa.ims.persistence.domain.JoinedOrder;
 import com.qa.ims.persistence.domain.Order;
 import com.qa.ims.utils.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -17,15 +20,23 @@ public class OrderController implements CrudController<Order> {
     private OrderDAO orderDAO;
     private OrderBasketDAO basketDAO;
 
+    private JoinedOrderDAO joinedDAO;
+
     private Utils utils;
 
 
-    public OrderController(OrderDAO orderDAO, OrderBasketDAO basketDAO, Utils utils) {
+    public OrderController(OrderDAO orderDAO, OrderBasketDAO basketDAO, JoinedOrderDAO joinedDAO, Utils utils) {
         super();
         this.orderDAO = orderDAO;
         this.basketDAO = basketDAO;
+        this.joinedDAO = joinedDAO;
         this.utils = utils;
     }
+
+    public void readOrdersJoined(List<Order> simpleList) {
+
+    }
+
 
     /**
      * Outputs all current orders to the logger
@@ -35,7 +46,10 @@ public class OrderController implements CrudController<Order> {
     public List<Order> readAll() {
         List<Order> orders = orderDAO.readAll();
         for (Order order : orders) {
-            LOGGER.info(order);
+            List<JoinedOrder> joined = joinedDAO.constructRow(order);
+            for (JoinedOrder joinedOrder : joined) {
+                LOGGER.info(joinedOrder);
+            }
         }
         return orders;
     }
@@ -107,7 +121,7 @@ public class OrderController implements CrudController<Order> {
      * @param userInput - the input from the scanner
      * @return - user input if valid, 'ASK' if invalid
      */
-    private String choiceValidate(String userInput) {
+    private String updateChoiceValidate(String userInput) {
         switch (userInput) {
             case "ADD":
                 return userInput;
@@ -128,7 +142,7 @@ public class OrderController implements CrudController<Order> {
         LOGGER.info("Would you like to add an item to, or remove an item from, order? (ADD/REMOVE)");
         String choice = "ASK";
         while (choice.equals("ASK")) {
-            choice = choiceValidate(utils.getString().toUpperCase());
+            choice = updateChoiceValidate(utils.getString().toUpperCase());
             if (choice.equals("ADD")) {
                 return addAnItem(orderId);
             } else if (choice.equals("REMOVE")) {

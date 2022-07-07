@@ -19,6 +19,13 @@ public class OrderBasketDAO {
 
     private ItemDAO itemDAO = new ItemDAO();
 
+    public OrderBasket modelFromResultSet(ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getLong("id");
+        Long orderID = resultSet.getLong("order_id");
+        Long itemID = resultSet.getLong("item_id");
+        return new OrderBasket(id, orderID, itemID);
+    }
+
     /**
      *
      * @return
@@ -46,7 +53,10 @@ public class OrderBasketDAO {
         float subTotal = 0;
         try (Connection connection = DBUtils.getInstance().getConnection();
             PreparedStatement statement = connection.prepareStatement(
-        "WITH basket AS (SELECT o.item_id, i.id, i.item_cost AS price FROM order_basket o JOIN items i ON o.item_id = i.id WHERE o.order_id = ?) SELECT SUM(price) FROM basket;")) {
+        """
+            WITH basket AS (SELECT o.item_id, i.id, i.item_cost AS price 
+            FROM order_basket o JOIN items i ON o.item_id = i.id WHERE o.order_id = ?) 
+            SELECT SUM(price) FROM basket;""")) {
             statement.setLong(1, orderID);
             ResultSet result = statement.executeQuery();
             result.next();
@@ -136,14 +146,5 @@ public class OrderBasketDAO {
             LOGGER.error(e.getMessage());
         }
         return 0;
-    }
-
-
-
-    public OrderBasket modelFromResultSet(ResultSet resultSet) throws SQLException {
-        Long id = resultSet.getLong("id");
-        Long orderID = resultSet.getLong("order_id");
-        Long itemID = resultSet.getLong("item_id");
-        return new OrderBasket(id, orderID, itemID);
     }
 }

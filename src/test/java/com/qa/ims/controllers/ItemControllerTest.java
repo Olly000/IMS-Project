@@ -30,12 +30,12 @@ public class ItemControllerTest {
 
     @Test
     public void testCreate() {
-        final String NAME = "Doughnut";
+        final String ITEMNAME = "Doughnut";
         final float COST = 1.5f;
         final int STOCK = 10;
-        final Item created = new Item(NAME, COST, STOCK);
+        final Item created = new Item(ITEMNAME, COST, STOCK);
 
-        Mockito.when(utils.getString()).thenReturn(NAME);
+        Mockito.when(utils.getString()).thenReturn(ITEMNAME);
         Mockito.when(utils.getFloat()).thenReturn(COST);
         Mockito.when(utils.getInt()).thenReturn(STOCK);
         Mockito.when(dao.create(created)).thenReturn(created);
