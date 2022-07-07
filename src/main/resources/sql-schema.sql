@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `customers` (
                        `id` INT NOT NULL AUTO_INCREMENT,
                        `first_name` VARCHAR(40) DEFAULT NULL,
                        `surname` VARCHAR(40) DEFAULT NULL,
-                       PRIMARY KEY (id)
+                       PRIMARY KEY (`id`)
 );
 
 CREATE TABLE IF NOT EXISTS `items` (
@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS `orders` (
                         `id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
                         `customer_id` INT NOT NULL,
                         FOREIGN KEY (`customer_id`) REFERENCES `customers`(`id`),
-                        `total_cost` DECIMAL(8,2) NOT NULL,
-                        `date` DATETIME NOT NULL
+                        `total_cost` DECIMAL(8,2) NOT NULL
+
 );
 
 CREATE TABLE IF NOT EXISTS `order_basket` (

@@ -54,26 +54,6 @@ public class OrderDAO implements Dao<Order> {
     }
 
     /**
-     * Outputs all the orders in the db to the logger in order table format
-     * @return List<Order>
-     */
-    public List<Order> readAllSimple() {
-        try (Connection connection = DBUtils.getInstance().getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM orders;")) {
-            List<Order> orders = new ArrayList<>();
-            while (resultSet.next()) {
-                orders.add(modelFromResultSet(resultSet));
-            }
-            return orders;
-        } catch (SQLException e) {
-            LOGGER.debug(e);
-            LOGGER.error(e.getMessage());
-        }
-        return new ArrayList<>();
-    }
-
-    /**
      * Outputs the most recent order in the database
      * @return Order
      */
@@ -172,7 +152,7 @@ public class OrderDAO implements Dao<Order> {
             LOGGER.debug(e);
             LOGGER.error(e.getMessage());
         }
-        return 0;
+        return Math.toIntExact(orderId);
     }
 
 

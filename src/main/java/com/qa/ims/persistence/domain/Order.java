@@ -1,5 +1,5 @@
 package com.qa.ims.persistence.domain;
-import java.sql.Date;
+
 
 import java.util.Objects;
 
@@ -11,7 +11,6 @@ public class Order {
 
     private float totalCost; // this will be derived from the OrderBasket table
 
-    private Date date;
 
     // Constructor for retrieving order from the db
     public Order(Long id, Long customerId, float totalCost) {
@@ -57,20 +56,14 @@ public class Order {
         this.totalCost = totalCost;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Order)) return false;
         Order order = (Order) o;
-        return Float.compare(order.getTotalCost(), getTotalCost()) == 0 && Objects.equals(getId(), order.getId()) && Objects.equals(getCustomerId(), order.getCustomerId());
+        return Float.compare(order.getTotalCost(), getTotalCost()) == 0 &&
+                Objects.equals(getId(), order.getId()) && Objects.equals(getCustomerId(), order.getCustomerId());
     }
 
     @Override

@@ -123,7 +123,7 @@ public class CustomerDAO implements Dao<Customer> {
 	}
 
 	/**
-	 * Deletes a customer in the database
+	 * Deletes a customer in the database - also deletes any orders related to them
 	 * 
 	 * @param id - id of the customer
 	 */
