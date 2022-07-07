@@ -1,7 +1,5 @@
 package com.qa.ims.persistence.dao;
 
-import com.qa.ims.controller.ItemController;
-import com.qa.ims.persistence.domain.Order;
 import com.qa.ims.persistence.domain.OrderBasket;
 import com.qa.ims.utils.DBUtils;
 import org.apache.logging.log4j.LogManager;
@@ -11,7 +9,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 public class OrderBasketDAO {
 
@@ -44,11 +41,6 @@ public class OrderBasketDAO {
         }
         return 0;    }
 
-    /*public float calculateItemTotal(Long itemID, int quantity) {
-        float price = itemDAO.read(itemID).getCost();
-        return price * quantity;
-    }*/
-
     public float calculateTotal(Long orderID) {
         float subTotal = 0;
         try (Connection connection = DBUtils.getInstance().getConnection();
@@ -69,18 +61,27 @@ public class OrderBasketDAO {
         return 0;
     }
 
-
+    /**
+     * Calls the createOneEntry method in a loop to allow user to add multiple items
+     * with the same id to the order_basket table.  Returns true on success, false on
+     * failure
+     * @param orderID - id of the order to have items added
+     * @param itemID - id of the item to be added
+     * @param quantity - number of items to be added
+     * @return Boolean - based on success
+     */
     public boolean addItemsToOrder(Long orderID, Long itemID, int quantity) {
-        for (int i = 0; i < quantity; i++) {
-            createOneEntry(orderID, itemID);
+        try {
+            for (int i = 0; i < quantity; i++) {
+                createOneEntry(orderID, itemID);
+            }
+            return true;
+        } catch (Exception e) {
+            LOGGER.debug(e);
+            LOGGER.error(e.getMessage());
         }
-        return true;
+        return false;
     }
-
-    public OrderBasket update(OrderBasket orderBasket) {
-        return null;
-    }
-
 
     /**
      * Deletes the entry with primary key id from the db and returns 0 if successful
@@ -97,7 +98,8 @@ public class OrderBasketDAO {
              PreparedStatement statement =
                      connection.prepareStatement("DELETE FROM order_basket WHERE id = ?");) {
             statement.setLong(1, id);
-            return statement.executeUpdate();
+            statement.executeUpdate();
+            return Math.toIntExact(id);
         } catch (Exception e) {
             LOGGER.debug(e);
             LOGGER.error(e.getMessage());
@@ -107,17 +109,19 @@ public class OrderBasketDAO {
 
     /**
      * Deletes all entries in the order_basket table related to an order with id
-     * of orderID
-     * @param orderID
+     * of orderID.  As I have since set the order_id foreign key of this table to
+     * ON DELETE CASCADE this method may have become superfluous
+     * @param orderId - id of order whose entries are to be deleted
      * @return
      */
-    public int deleteAllFromOrder(Long orderID) {
+    public int deleteAllFromOrder(Long orderId) {
         try (Connection connection = DBUtils.getInstance().getConnection();
              PreparedStatement statement =
                      connection.prepareStatement(
                              "DELETE FROM order_basket WHERE order_id = ?");) {
-            statement.setLong(1, orderID);
-            return statement.executeUpdate();
+            statement.setLong(1, orderId);
+            statement.executeUpdate();
+            return Math.toIntExact(orderId);
         } catch (Exception e) {
             LOGGER.debug(e);
             LOGGER.error(e.getMessage());

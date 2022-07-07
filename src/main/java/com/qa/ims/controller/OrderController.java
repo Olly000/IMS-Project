@@ -5,6 +5,7 @@ import com.qa.ims.persistence.dao.OrderBasketDAO;
 import com.qa.ims.persistence.dao.OrderDAO;
 import com.qa.ims.persistence.domain.JoinedOrder;
 import com.qa.ims.persistence.domain.Order;
+import com.qa.ims.persistence.domain.OrderBasket;
 import com.qa.ims.utils.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -95,13 +96,13 @@ public class OrderController implements CrudController<Order> {
 
     /**
      *
-     * @param orderID - adds an item to the orderBasket from user input
+     * @param orderId - adds an item to the orderBasket from user input
      * @return - float - the new cost of the order
      */
-    private float addAnItem(Long orderID) {
-        LOGGER.info("Enter ID of item to add to order number " + orderID);
+    private float addAnItem(Long orderId) {
+        LOGGER.info("Enter ID of item to add to order number " + orderId);
         Long itemID = utils.getLong();
-        return basketDAO.createOneEntry(orderID, itemID);
+        return basketDAO.createOneEntry(orderId, itemID);
     }
 
     /**
