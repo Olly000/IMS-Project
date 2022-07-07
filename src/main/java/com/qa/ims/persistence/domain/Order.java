@@ -66,26 +66,25 @@ public class Order {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Order)) return false;
+        Order order = (Order) o;
+        return Float.compare(order.getTotalCost(), getTotalCost()) == 0 && Objects.equals(getId(), order.getId()) && Objects.equals(getCustomerId(), order.getCustomerId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getCustomerId(), getTotalCost());
+    }
+
+    @Override
     public String toString() {
         return "Order{" +
                 "id=" + id +
                 ", customerId=" + customerId +
                 ", totalCost=" + totalCost +
-                ", date=" + date +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Order)) return false;
-        Order order = (Order) o;
-        return getCustomerId() == order.getCustomerId() && Float.compare(order.getTotalCost(), getTotalCost()) == 0 && Objects.equals(getId(), order.getId()) && Objects.equals(getDate(), order.getDate());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getCustomerId(), getTotalCost(), getDate());
     }
 }
 

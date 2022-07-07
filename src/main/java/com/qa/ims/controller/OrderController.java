@@ -2,9 +2,7 @@ package com.qa.ims.controller;
 
 import com.qa.ims.persistence.dao.OrderBasketDAO;
 import com.qa.ims.persistence.dao.OrderDAO;
-import com.qa.ims.persistence.domain.Item;
 import com.qa.ims.persistence.domain.Order;
-import com.qa.ims.persistence.domain.OrderBasket;
 import com.qa.ims.utils.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,8 +33,7 @@ public class OrderController implements CrudController<Order> {
     }
 
     public boolean itemAdder(Long orderId) {
-        String answer = "";
-        float subTotal = 0f;
+        String answer;
         do {
             LOGGER.info("Please enter the id of the item: ");
             Long itemId = utils.getLong();
@@ -52,13 +49,16 @@ public class OrderController implements CrudController<Order> {
     }
 
     @Override
-    public Order create() {
+    public Order create() { // not too keen on the way this creates an order then subsequently
+                            // uses update to set the cost but the orderId needs to be generated
+                            // for the orderBasket entities to be added
         LOGGER.info("Please enter the customer ID: ");
         Long customerId = utils.getLong();
         Order order = orderDAO.create(new Order(customerId));
         itemAdder(order.getId());
         order.setTotalCost(basketDAO.calculateTotal(order.getId()));
-        LOGGER.info("Order number" + order.getId() + "created, total cost is: " + order.getTotalCost());
+        orderDAO.update(order);
+        LOGGER.info("Order number " + order.getId() + " created, total cost is: " + order.getTotalCost());
         return order;
     }
 
@@ -75,13 +75,31 @@ public class OrderController implements CrudController<Order> {
 
     }
 
-    private float updateChoice(Long orderId) {
-        Option choice = Option.getOption(utils);
-        if (choice == Option.ADD) {
-            return addAnItem(orderId);
-            } else if (choice == Option.REMOVE) {
+    private String choiceValidate(String userInput) {
+        switch (userInput) {
+            case "ADD":
+                return userInput;
+            case "REMOVE":
+                return userInput;
+            default:
+                return "ASK";
+        }
+    }
+
+    private float updateChoice(Long orderId) { // this could do with some validation
+        LOGGER.info("Would you like to add an item to, or remove an item from, order? (ADD/REMOVE)");
+        String choice = "ASK";
+        while (choice.equals("ASK")) {
+            choice = choiceValidate(utils.getString().toUpperCase());
+            if (choice.equals("ADD")) {
+                return addAnItem(orderId);
+            } else if (choice.equals("REMOVE")) {
                 return removeAnItem(orderId);
+            } else {
+                LOGGER.info("Invalid choice, please enter ADD or REMOVE");
             }
+        }
+
         return 0;
         }
 
@@ -90,10 +108,15 @@ public class OrderController implements CrudController<Order> {
         LOGGER.info("Please enter the id of the order you want to update");
         Long orderId = utils.getLong();
         Order originalOrder = orderDAO.read(orderId);
-        originalOrder.setTotalCost(updateChoice(orderId));
-        orderDAO.update(originalOrder);
-        LOGGER.info("Order Updated");
-        return originalOrder;
+        originalOrder.setTotalCost(updateChoice(orderId)); // this just adds to the entity
+        if (Math.round(originalOrder.getTotalCost()) == 0) {
+            orderDAO.delete(orderId);
+            return null;
+        } else {
+            orderDAO.update(originalOrder);
+            LOGGER.info("Order Updated");
+        }
+        return orderDAO.read(originalOrder.getId());
     }
 
     @Override
@@ -101,7 +124,6 @@ public class OrderController implements CrudController<Order> {
         LOGGER.info("Please enter the id of the order you would like to delete");
         Long orderId = utils.getLong();
         orderDAO.delete(orderId);
-        basketDAO.deleteAllFromOrder(orderId);
         LOGGER.info("Order number " + orderId + " has been deleted");
         return 0;
 

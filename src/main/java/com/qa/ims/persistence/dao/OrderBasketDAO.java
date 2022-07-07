@@ -23,22 +23,10 @@ public class OrderBasketDAO {
      *
      * @return
      */
-
-
-    public List<OrderBasket> readAll() {
-        return null;
-    }
-
-
-    public OrderBasket read(Long id) {
-        return null;
-    }
-
-
     public float createOneEntry(Long orderID, Long itemID) {
         try (Connection connection = DBUtils.getInstance().getConnection();
              PreparedStatement statement = connection
-                     .prepareStatement("INSERT INTO order_basket(order_id, item_id) VALUES (?, ?)");) {
+                     .prepareStatement("INSERT INTO order_basket(order_id, item_id) VALUES (?, ?)")) {
             statement.setLong(1, orderID);
             statement.setLong(2, itemID);
             statement.executeUpdate();
@@ -58,12 +46,11 @@ public class OrderBasketDAO {
         float subTotal = 0;
         try (Connection connection = DBUtils.getInstance().getConnection();
             PreparedStatement statement = connection.prepareStatement(
-        "WITH basket AS (SELECT o.item_id, i.id, i.item_cost FROM order_basket o JOIN items i ON " +
-                "o.item_id = i.id WHERE o.id = ?)" +
-                "SELECT SUM(item_cost) FROM basket;");) {
+        "WITH basket AS (SELECT o.item_id, i.id, i.item_cost AS price FROM order_basket o JOIN items i ON o.item_id = i.id WHERE o.order_id = ?) SELECT SUM(price) FROM basket;")) {
             statement.setLong(1, orderID);
             ResultSet result = statement.executeQuery();
-            return result.getFloat("SUM(item_cost)");
+            result.next();
+            return result.getFloat("SUM(price)");
 
         } catch (SQLException e) {
             LOGGER.debug(e);
@@ -89,7 +76,8 @@ public class OrderBasketDAO {
      * Deletes the entry with primary key id from the db and returns 0 if successful
      * NB - this method is for an individual row of the order_basket table, use
      * this.deleteAllFromOrder to delete all of the rows associated with a particular
-     * order id.
+     * order id or deleteItemFromOrder to delete a single entry relating to a specific
+     * order and item
      * @param id - the index of the order/item relationship
      * @return
      */

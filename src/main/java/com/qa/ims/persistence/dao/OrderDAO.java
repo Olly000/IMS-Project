@@ -9,18 +9,20 @@ import java.sql.*;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
 
 public class OrderDAO implements Dao<Order> {
 
     public static final Logger LOGGER = LogManager.getLogger();
 
+    private final OrderBasketDAO basketDAO = new OrderBasketDAO();
+
     /**
      * Creates an Order object from a resultSet
-     * @param resultSet
+     * @param resultSet - the result of querying the orders table
      * @return Order
-     * @throws SQLException
+     * @throws SQLException if order cannot be created
      */
     @Override
     public Order modelFromResultSet(ResultSet resultSet) throws SQLException {
@@ -31,14 +33,14 @@ public class OrderDAO implements Dao<Order> {
     }
 
     /**
-     * Outputs all of the orders in the db to the logger
+     * Outputs all the orders in the db to the logger
      * @return List<Order>
      */
     @Override
     public List<Order> readAll() {
         try (Connection connection = DBUtils.getInstance().getConnection();
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM orders;");) {
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM orders;")) {
             List<Order> orders = new ArrayList<>();
             while (resultSet.next()) {
                 orders.add(modelFromResultSet(resultSet));
@@ -71,14 +73,14 @@ public class OrderDAO implements Dao<Order> {
 
     /**
      * Adds a new order to the database
-     * @param order
+     * @param order - the order to be inserted into the db
      * @return Order
      */
     @Override
     public Order create(Order order) {
         try (Connection connection = DBUtils.getInstance().getConnection();
              PreparedStatement statement = connection
-                     .prepareStatement("INSERT INTO orders(customer_id, total_cost) VALUES (?, ?)");) {
+                     .prepareStatement("INSERT INTO orders(customer_id, total_cost) VALUES (?, ?)")) {
             statement.setLong(1, order.getCustomerId());
             statement.setFloat(2, order.getTotalCost());
             statement.executeUpdate();
@@ -98,13 +100,13 @@ public class OrderDAO implements Dao<Order> {
     @Override
     public Order read(Long id) {
         try (Connection connection = DBUtils.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM orders WHERE id = ?");) {
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM orders WHERE id = ?")) {
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 resultSet.next();
                 return modelFromResultSet(resultSet);
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             LOGGER.debug(e);
             LOGGER.error(e.getMessage());
         }
@@ -121,9 +123,9 @@ public class OrderDAO implements Dao<Order> {
         try (Connection connection = DBUtils.getInstance().getConnection();
              PreparedStatement statement = connection
                      .prepareStatement(
-                             "UPDATE orders SET total_cost = ?  WHERE id = ?");) {
+                             "UPDATE orders SET total_cost = ?  WHERE id = ?")) {
             statement.setFloat(1, order.getTotalCost());
-            statement.setLong(3, order.getId());
+            statement.setLong(2, order.getId());
             statement.executeUpdate();
             return read(order.getId());
         } catch (Exception e) {
@@ -134,16 +136,18 @@ public class OrderDAO implements Dao<Order> {
     }
 
     /**
-     * Deletes order with index id from the database returns 0 on success
-     * @param id
+     * Deletes order with index id from the database along with all entries relating to the order in the
+     * order_basket table, returns 0 on success
+     * @param orderId - the id of the order to be deleted.
      * @return 0
      */
     @Override
-    public int delete(Long id) {
+    public int delete(Long orderId) {
         try (Connection connection = DBUtils.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement("DELETE FROM orders WHERE id = ?");) {
-            statement.setLong(1, id);
-            return statement.executeUpdate();
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM orders WHERE id = ?")) {
+            statement.setLong(1, orderId);
+            basketDAO.deleteAllFromOrder(orderId);
+            statement.executeUpdate();
         } catch (Exception e) {
             LOGGER.debug(e);
             LOGGER.error(e.getMessage());
