@@ -19,6 +19,7 @@ public class OrderController implements CrudController<Order> {
 
     private Utils utils;
 
+
     public OrderController(OrderDAO orderDAO, OrderBasketDAO basketDAO, Utils utils) {
         super();
         this.orderDAO = orderDAO;
@@ -26,12 +27,24 @@ public class OrderController implements CrudController<Order> {
         this.utils = utils;
     }
 
-
+    /**
+     * Outputs all current orders to the logger
+     * @return List<Order>
+     */
     @Override
     public List<Order> readAll() {
-        return null;
+        List<Order> orders = orderDAO.readAll();
+        for (Order order : orders) {
+            LOGGER.info(order);
+        }
+        return orders;
     }
 
+    /**
+     * Adds entries to the OrderBasket table from user input, returns true if successful
+     * @param orderId - id of the order to be added to
+     * @return - boolean
+     */
     public boolean itemAdder(Long orderId) {
         String answer;
         do {
@@ -48,6 +61,10 @@ public class OrderController implements CrudController<Order> {
         return true;
     }
 
+    /**
+     * Creates a new order from user input
+     * @return - the order created
+     */
     @Override
     public Order create() { // not too keen on the way this creates an order then subsequently
                             // uses update to set the cost but the orderId needs to be generated
@@ -62,12 +79,22 @@ public class OrderController implements CrudController<Order> {
         return order;
     }
 
+    /**
+     *
+     * @param orderID - adds an item to the orderBasket from user input
+     * @return - float - the new cost of the order
+     */
     private float addAnItem(Long orderID) {
         LOGGER.info("Enter ID of item to add to order number " + orderID);
         Long itemID = utils.getLong();
         return basketDAO.createOneEntry(orderID, itemID);
     }
 
+    /**
+     *
+     * @param orderID - removes an item from the orderBasket from user input
+     * @return - float - the new cost of the order
+     */
     private float removeAnItem(Long orderID) {
         LOGGER.info("Enter ID of item to remove from order number " + orderID);
         Long itemID = utils.getLong();
@@ -75,6 +102,11 @@ public class OrderController implements CrudController<Order> {
 
     }
 
+    /**
+     * validates the user input when user asked to choose to add or remove an item
+     * @param userInput - the input from the scanner
+     * @return - user input if valid, 'ASK' if invalid
+     */
     private String choiceValidate(String userInput) {
         switch (userInput) {
             case "ADD":
@@ -86,6 +118,12 @@ public class OrderController implements CrudController<Order> {
         }
     }
 
+    /**
+     * Provides control to allow the user to choose to add or remove an item when they
+     * select the update option from the order menu
+     * @param orderId - the id of the order to be updated
+     * @return - the new price of the order, or 0 if unsuccessful
+     */
     private float updateChoice(Long orderId) { // this could do with some validation
         LOGGER.info("Would you like to add an item to, or remove an item from, order? (ADD/REMOVE)");
         String choice = "ASK";
@@ -103,6 +141,10 @@ public class OrderController implements CrudController<Order> {
         return 0;
         }
 
+    /**
+     * Allows user to update an order based on their input
+     * @return - returns the updated order
+     */
     @Override
     public Order update() {
         LOGGER.info("Please enter the id of the order you want to update");
@@ -119,6 +161,10 @@ public class OrderController implements CrudController<Order> {
         return orderDAO.read(originalOrder.getId());
     }
 
+    /**
+     * Allows the user to delete an order based upon their input
+     * @return int 0 on success;
+     */
     @Override
     public int delete() {
         LOGGER.info("Please enter the id of the order you would like to delete");
