@@ -45,6 +45,7 @@ public class ItemControllerTest {
         Mockito.verify(utils, Mockito.times(1)).getString();
         Mockito.verify(utils, Mockito.times(1)).getFloat();
         Mockito.verify(utils, Mockito.times(1)).getInt();
+        Mockito.verify(dao, Mockito.times(1)).create(created);
     }
 
     @Test

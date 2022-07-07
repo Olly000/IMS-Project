@@ -24,8 +24,9 @@ public class OrderBasketDAO {
     }
 
     /**
-     *
-     * @return
+     * Adds one orderID, itemID object to the order_basket table then calculates and returns
+     * the new total cost of the order
+     * @return float
      */
     public float createOneEntry(Long orderID, Long itemID) {
         try (Connection connection = DBUtils.getInstance().getConnection();
@@ -42,7 +43,6 @@ public class OrderBasketDAO {
         return 0;    }
 
     public float calculateTotal(Long orderID) {
-        float subTotal = 0;
         try (Connection connection = DBUtils.getInstance().getConnection();
             PreparedStatement statement = connection.prepareStatement(
         """

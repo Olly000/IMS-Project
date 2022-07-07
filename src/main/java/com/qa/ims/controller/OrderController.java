@@ -5,12 +5,10 @@ import com.qa.ims.persistence.dao.OrderBasketDAO;
 import com.qa.ims.persistence.dao.OrderDAO;
 import com.qa.ims.persistence.domain.JoinedOrder;
 import com.qa.ims.persistence.domain.Order;
-import com.qa.ims.persistence.domain.OrderBasket;
 import com.qa.ims.utils.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,11 +31,6 @@ public class OrderController implements CrudController<Order> {
         this.joinedDAO = joinedDAO;
         this.utils = utils;
     }
-
-    public void readOrdersJoined(List<Order> simpleList) {
-
-    }
-
 
     /**
      * Outputs all current orders to the logger
@@ -122,7 +115,7 @@ public class OrderController implements CrudController<Order> {
      * @param userInput - the input from the scanner
      * @return - user input if valid, 'ASK' if invalid
      */
-    private String updateChoiceValidate(String userInput) {
+    public String updateChoiceValidate(String userInput) {
         switch (userInput) {
             case "ADD":
                 return userInput;
