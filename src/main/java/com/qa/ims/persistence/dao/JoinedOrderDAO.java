@@ -39,17 +39,7 @@ public class JoinedOrderDAO {
         List<JoinedOrder> allRows = new ArrayList<>();
         try (Connection connection = DBUtils.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     """
-            WITH co AS (SELECT o.id AS order_id, o.customer_id, c.first_name, c.surname, o.total_cost 
-            FROM orders o 
-            JOIN customers c ON o.customer_id = c.id),
-            contents AS (SELECT ob.order_id, ob.item_id, i.item_name, COUNT(i.id) AS count 
-            FROM order_basket ob 
-            JOIN items i ON ob.item_id = i.id WHERE ob.order_id = ? GROUP BY i.id)
-            SELECT co.order_id, co.customer_id, co.first_name, co.surname, co.total_cost, con.item_name, con.count 
-            FROM co 
-            JOIN contents con ON co.order_id = con.order_id;
-            """)) {
+                     " WITH co AS (SELECT o.id AS order_id, o.customer_id, c.first_name, c.surname, o.total_cost FROM orders o JOIN customers c ON o.customer_id = c.id), contents AS (SELECT ob.order_id, ob.item_id, i.item_name, COUNT(i.id) AS count FROM order_basket ob JOIN items i ON ob.item_id = i.id WHERE ob.order_id = ? GROUP BY i.id) SELECT co.order_id, co.customer_id, co.first_name, co.surname, co.total_cost, con.item_name, con.count FROM co JOIN contents con ON co.order_id = con.order_id; ")) {
             statement.setLong(1, order.getId());
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
