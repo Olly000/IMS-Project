@@ -1,5 +1,6 @@
 package com.qa.ims.controller;
 
+import com.qa.ims.persistence.dao.ItemDAO;
 import com.qa.ims.persistence.dao.JoinedOrderDAO;
 import com.qa.ims.persistence.dao.OrderBasketDAO;
 import com.qa.ims.persistence.dao.OrderDAO;
@@ -17,6 +18,8 @@ public class OrderController implements CrudController<Order> {
     public static final Logger LOGGER = LogManager.getLogger();
 
     private OrderDAO orderDAO;
+
+    private ItemDAO itemDAO;
     private OrderBasketDAO basketDAO;
 
     private JoinedOrderDAO joinedDAO;
@@ -61,6 +64,7 @@ public class OrderController implements CrudController<Order> {
             LOGGER.info("Please enter the quantity of item required");
             int quantity = utils.getInt();
             basketDAO.addItemsToOrder(orderId, itemId, quantity); // adds rows to the OrderBasket table
+            itemDAO.amendStockLevel(itemId, quantity); // amends the stock level in the items table
             LOGGER.info("Input END to finish adding items, ITEM to add more");
             answer = utils.getString().toUpperCase();
 
@@ -94,19 +98,21 @@ public class OrderController implements CrudController<Order> {
      */
     private float addAnItem(Long orderId) {
         LOGGER.info("Enter ID of item to add to order number " + orderId);
-        Long itemID = utils.getLong();
-        return basketDAO.createOneEntry(orderId, itemID);
+        Long itemId = utils.getLong();
+        itemDAO.amendStockLevel(itemId, -1); // quantity is negative as adding an item to the order removes it from stock
+        return basketDAO.createOneEntry(orderId, itemId);
     }
 
     /**
      *
-     * @param orderID - removes an item from the orderBasket from user input
+     * @param orderId - removes an item from the orderBasket from user input
      * @return - float - the new cost of the order
      */
-    private float removeAnItem(Long orderID) {
-        LOGGER.info("Enter ID of item to remove from order number " + orderID);
-        Long itemID = utils.getLong();
-        return basketDAO.deleteItemFromOrder(orderID, itemID);
+    private float removeAnItem(Long orderId) {
+        LOGGER.info("Enter ID of item to remove from order number " + orderId);
+        Long itemId = utils.getLong();
+        itemDAO.amendStockLevel(itemId, 1);
+        return basketDAO.deleteItemFromOrder(orderId, itemId);
 
     }
 
