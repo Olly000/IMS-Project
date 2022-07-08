@@ -6,23 +6,23 @@ public class Item {
 
     private Long id;
 
-    private String name;
+    private String itemName;
 
     private float cost;
 
     private int numberInStock;
 
     // Constructor for retrieving items from the db
-    public Item(Long id, String name, float cost, int numberInStock) {
+    public Item(Long id, String itemName, float cost, int numberInStock) {
         this.id = id;
-        this.name = name;
+        this.itemName = itemName;
         this.cost = cost;
         this.numberInStock = numberInStock;
     }
 
     //Constructor for adding items to the db
-    public Item(String name, float cost, int numberInStock) {
-        this.name = name;
+    public Item(String itemName, float cost, int numberInStock) {
+        this.itemName = itemName;
         this.cost = cost;
         this.numberInStock = numberInStock;
     }
@@ -37,12 +37,12 @@ public class Item {
         this.id = id;
     }
 
-    public String getName() {
-        return this.name;
+    public String getItemName() {
+        return this.itemName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
     public float getCost() {
@@ -61,26 +61,24 @@ public class Item {
         this.numberInStock = numberInStock;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Item)) return false;
         Item item = (Item) o;
-        return Float.compare(item.getCost(), getCost()) == 0 && getNumberInStock() == item.getNumberInStock()
-                && Objects.equals(getId(), item.getId()) && Objects.equals(getName(), item.getName());
+        return Float.compare(item.getCost(), getCost()) == 0 && getNumberInStock() == item.getNumberInStock() && Objects.equals(getId(), item.getId()) && Objects.equals(getItemName(), item.getItemName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getCost(), getNumberInStock());
+        return Objects.hash(getId(), getItemName(), getCost(), getNumberInStock());
     }
 
     @Override
     public String toString() {
         return "Item{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", itemName='" + itemName + '\'' +
                 ", cost=" + cost +
                 ", numberInStock=" + numberInStock +
                 '}';

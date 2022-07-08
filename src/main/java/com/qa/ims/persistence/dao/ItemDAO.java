@@ -5,7 +5,6 @@ import com.qa.ims.utils.DBUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,14 +13,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.qa.ims.persistence.domain.Item;
-import com.qa.ims.utils.DBUtils;
 
 public class ItemDAO implements Dao<Item> {
 
@@ -58,10 +49,15 @@ public class ItemDAO implements Dao<Item> {
         return new ArrayList<>();
     }
 
+    /**
+     * Reads the most recent item added to the database
+     * @return Item
+     */
     public Item readLatest() {
         try (Connection connection = DBUtils.getInstance().getConnection();
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM items ORDER BY id DESC LIMIT 1");) {
+             ResultSet resultSet =
+                     statement.executeQuery("SELECT * FROM items WHERE id = (SELECT MAX(id) FROM items);")) {
             resultSet.next();
             return modelFromResultSet(resultSet);
         } catch (Exception e) {
@@ -72,16 +68,17 @@ public class ItemDAO implements Dao<Item> {
     }
 
     /**
-     * Creates an item in the database
+     * Adds an item to the database and returns it when successful
      *
-     * @param item - takes in a customer object. id will be ignored
+     * @param item
+     * @return Item
      */
     @Override
     public Item create(Item item) {
         try (Connection connection = DBUtils.getInstance().getConnection();
              PreparedStatement statement = connection
                      .prepareStatement("INSERT INTO items(item_name, item_cost, number_in_stock) VALUES (?, ?, ?)");) {
-            statement.setString(1, item.getName());
+            statement.setString(1, item.getItemName());
             statement.setFloat(2, item.getCost());
             statement.setInt(3, item.getNumberInStock());
             statement.executeUpdate();
@@ -93,6 +90,11 @@ public class ItemDAO implements Dao<Item> {
         return null;
     }
 
+    /**
+     * Returns item with index id
+     * @param id
+     * @return Item
+     */
     @Override
     public Item read(Long id) {
         try (Connection connection = DBUtils.getInstance().getConnection();
@@ -110,11 +112,10 @@ public class ItemDAO implements Dao<Item> {
     }
 
     /**
-     * Updates an item in the database
+     * Updates an item in the database and returns the result on success
      *
-     * @param item - takes in a customer object, the id field will be used to
-     *                 update that customer in the database
-     * @return
+     * @param item
+     * @return Item
      */
     @Override
     public Item update(Item item) {
@@ -122,7 +123,7 @@ public class ItemDAO implements Dao<Item> {
              PreparedStatement statement = connection
                      .prepareStatement(
                              "UPDATE items SET item_name = ?, item_cost = ?, number_in_stock = ? WHERE id = ?");) {
-            statement.setString(1, item.getName());
+            statement.setString(1, item.getItemName());
             statement.setFloat(2, item.getCost());
             statement.setInt(3, item.getNumberInStock());
             statement.setLong(4, item.getId());
@@ -136,9 +137,10 @@ public class ItemDAO implements Dao<Item> {
     }
 
     /**
-     * Deletes an item in the database
+     * Deletes item with index id from the database returns 0 on success
      *
-     * @param id - id of the item
+     * @param id
+     * @return 0
      */
     @Override
     public int delete(Long id) {

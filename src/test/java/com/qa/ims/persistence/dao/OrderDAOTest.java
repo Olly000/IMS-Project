@@ -1,20 +1,18 @@
 package com.qa.ims.persistence.dao;
 
-import static org.junit.Assert.assertEquals;
+import com.qa.ims.persistence.domain.Order;
+import com.qa.ims.utils.DBUtils;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
-import org.junit.Test;
+public class OrderDAOTest {
 
-import com.qa.ims.persistence.domain.Item;
-import com.qa.ims.utils.DBUtils;
-
-public class ItemDAOTest {
-
-    private final ItemDAO DAO = new ItemDAO();
+    private final OrderDAO DAO = new OrderDAO();
 
     @Before
     public void setup() {
@@ -24,33 +22,31 @@ public class ItemDAOTest {
 
     @Test
     public void testCreate() {
-        final Item created = new Item(3L,"cookie", 1f, 25);
+        final Order created = new Order(2L, 1L, 4f);
         assertEquals(created, DAO.create(created));
     }
 
     @Test
     public void testReadAll() {
-        List<Item> expected = new ArrayList<>();
-        expected.add(new Item(1L,"doughnut", 1.5f, 10));
-        expected.add(new Item(2L, "muffin", 2f, 20));
+        List<Order> expected = new ArrayList<>();
+        expected.add(new Order(1L, 1L, 5f));
         assertEquals(expected, DAO.readAll());
     }
 
     @Test
     public void testReadLatest() {
-        assertEquals(new Item(2L, "muffin",  2f, 20), DAO.readLatest());
+        assertEquals(new Order(1L, 1L, 5f), DAO.readLatest());
     }
 
     @Test
     public void testRead() {
         final long ID = 1L;
-        assertEquals(new Item(ID, "doughnut",  1.5f, 10), DAO.read(ID));
+        assertEquals(new Order(ID, 1L, 5f), DAO.read(ID));
     }
 
     @Test
     public void testUpdate() {
-        final long ID = 1L;
-        final Item updated = new Item(ID, "cupcake",  2.5f, 20);
+        final Order updated = new Order(1L, 1L, 7);
         assertEquals(updated, DAO.update(updated));
 
     }
@@ -59,4 +55,6 @@ public class ItemDAOTest {
     public void testDelete() {
         assertEquals(1, DAO.delete(1L));
     }
+
+
 }

@@ -1,48 +1,51 @@
 package com.qa.ims.persistence.domain;
 
-import java.time.LocalDateTime;
+
 import java.util.Objects;
 
 public class Order {
 
-    private int id;
+    private Long id;
 
-    private int customerId;
+    private Long customerId;
 
-    private float totalCost;
+    private float totalCost; // this will be derived from the OrderBasket table
 
-    private LocalDateTime date;
 
     // Constructor for retrieving order from the db
-    public Order(int id, int customerId, float totalCost, LocalDateTime date) {
+    public Order(Long id, Long customerId, float totalCost) {
         this.id = id;
         this.customerId = customerId;
         this.totalCost = totalCost;
-        this.date = date;
     }
 
-    // Constructor for creating or updating an order
-    public Order(int customerId, float totalCost, LocalDateTime date) {
+    // Constructor for updating an order
+
+    public Order(Long id, Long customerId) {
         this.id = id;
         this.customerId = customerId;
-        this.date = date;
+    }
+
+    // Constructor for creating an order
+    public Order(Long customerId) {
+        this.customerId = customerId;
     }
 
     // Getters and setters
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public int getCustomerId() {
+    public Long getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(Long customerId) {
         this.customerId = customerId;
     }
 
@@ -54,12 +57,19 @@ public class Order {
         this.totalCost = totalCost;
     }
 
-    public LocalDateTime getDate() {
-        return date;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Order)) return false;
+        Order order = (Order) o;
+        return Float.compare(order.getTotalCost(), getTotalCost()) == 0 &&
+                Objects.equals(getId(), order.getId()) && Objects.equals(getCustomerId(), order.getCustomerId());
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getCustomerId(), getTotalCost());
     }
 
     @Override
@@ -68,21 +78,9 @@ public class Order {
                 "id=" + id +
                 ", customerId=" + customerId +
                 ", totalCost=" + totalCost +
-                ", date=" + date +
                 '}';
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Order)) return false;
-        Order order = (Order) o;
-        return getId() == order.getId() && getCustomerId() == order.getCustomerId() && Float.compare(order.getTotalCost(), getTotalCost()) == 0 && getDate().equals(order.getDate());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getCustomerId(), getTotalCost(), getDate());
-    }
 }
+
+
 
