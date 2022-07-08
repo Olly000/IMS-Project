@@ -27,11 +27,12 @@ public class OrderController implements CrudController<Order> {
     private Utils utils;
 
 
-    public OrderController(OrderDAO orderDAO, OrderBasketDAO basketDAO, JoinedOrderDAO joinedDAO, Utils utils) {
+    public OrderController(OrderDAO orderDAO, OrderBasketDAO basketDAO, JoinedOrderDAO joinedDAO, ItemDAO itemDAO, Utils utils) {
         super();
         this.orderDAO = orderDAO;
         this.basketDAO = basketDAO;
         this.joinedDAO = joinedDAO;
+        this.itemDAO = itemDAO;
         this.utils = utils;
     }
 
@@ -183,10 +184,9 @@ public class OrderController implements CrudController<Order> {
     public int delete() {
         LOGGER.info("Please enter the id of the order you would like to delete");
         Long orderId = utils.getLong();
+        basketDAO.returnItemsToStock(orderId);
         orderDAO.delete(orderId);
         LOGGER.info("Order number " + orderId + " has been deleted");
         return 0;
-
-
     }
 }

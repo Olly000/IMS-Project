@@ -74,8 +74,8 @@ public class ItemDAO implements Dao<Item> {
              PreparedStatement statement = connection
                      .prepareStatement(
                              "UPDATE items SET number_in_stock = ? WHERE id = ?");) {
-            statement.setInt(3, item.getNumberInStock());
-            statement.setLong(4, item.getId());
+            statement.setInt(1, item.getNumberInStock());
+            statement.setLong(2, item.getId());
             statement.executeUpdate();
             return item;
         } catch (Exception e) {
