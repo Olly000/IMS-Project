@@ -59,4 +59,12 @@ public class ItemDAOTest {
     public void testDelete() {
         assertEquals(1, DAO.delete(1L));
     }
+
+    @Test
+    public void testAmendStockLevel() {
+        Item item = new Item(1L, "doughnut", 1.5f, 12);
+        Long itemId = 1L;
+        int quantity = 2;
+        assertEquals(item, DAO.amendStockLevel(itemId, quantity));
+    }
 }

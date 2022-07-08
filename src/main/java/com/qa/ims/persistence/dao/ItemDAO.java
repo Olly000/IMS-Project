@@ -67,6 +67,25 @@ public class ItemDAO implements Dao<Item> {
         return null;
     }
 
+    public Item amendStockLevel(Long itemId, int quantity) {
+        Item item = read(itemId);
+        item.setNumberInStock(item.getNumberInStock() + quantity);
+        try (Connection connection = DBUtils.getInstance().getConnection();
+             PreparedStatement statement = connection
+                     .prepareStatement(
+                             "UPDATE items SET number_in_stock = ? WHERE id = ?");) {
+            statement.setInt(1, item.getNumberInStock());
+            statement.setLong(2, item.getId());
+            statement.executeUpdate();
+            return item;
+        } catch (Exception e) {
+            LOGGER.debug(e);
+            LOGGER.error(e.getMessage());
+        }
+        return null;
+    }
+
+
     /**
      * Adds an item to the database and returns it when successful
      *

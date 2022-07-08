@@ -115,7 +115,7 @@ public class OrderBasketDAO {
         try (Connection connection = DBUtils.getInstance().getConnection();
              PreparedStatement statement =
                      connection.prepareStatement(
-                             "DELETE FROM order_basket WHERE order_id = ?");) {
+                             "DELETE FROM order_basket WHERE order_id = ?;")) {
             statement.setLong(1, orderId);
             statement.executeUpdate();
             return Math.toIntExact(orderId);
@@ -125,6 +125,56 @@ public class OrderBasketDAO {
         }
         return 0;
     }
+
+    /**
+     * Uses a join query to ascertain the number of a specific item in an order
+     * @param orderId - id of order to be queries
+     * @param itemId - id of the item in the order
+     * @return int - quantity of item in order
+     */
+    public int quantityOfItemInOrder(Long orderId, Long itemId) {
+        try (Connection connection = DBUtils.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT ob.order_id, ob.item_id, i.item_name, COUNT(i.id) AS count FROM order_basket ob JOIN items i ON ob.item_id = i.id WHERE ob.order_id = ? AND item_id = ? GROUP BY i.id;")) {
+                     statement.setLong(1, orderId);
+                     statement.setLong(2, itemId);
+            ResultSet result = statement.executeQuery();
+            result.next();
+            return result.getInt("count");
+
+        } catch (SQLException e) {
+            LOGGER.debug(e);
+            LOGGER.error(e.getMessage());
+        }
+        return 0;
+    }
+
+    /**
+     * Recalculates items in stock once an order has been deleted
+     * @param orderId -id of the order that is being deleted
+     * @return Order
+     */
+    public Long returnItemsToStock(Long orderId) {
+        try (Connection connection = DBUtils.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT item_id FROM order_basket ob WHERE order_id = ? GROUP BY item_id")) {
+            statement.setLong(1, orderId);
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                Long itemId = result.getLong("item_id");
+                int quantity = quantityOfItemInOrder(orderId, itemId);
+                itemDAO.amendStockLevel(itemId, quantity);
+            }
+            return orderId;
+
+        } catch (SQLException e) {
+            LOGGER.debug(e);
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+
 
     /**
      * Deletes a single item from the OB table then calls the recalculateTotal

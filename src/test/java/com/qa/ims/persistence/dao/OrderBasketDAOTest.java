@@ -9,8 +9,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class OrderBasketDAOTest {
 
@@ -44,6 +43,23 @@ public class OrderBasketDAOTest {
         final int QUANTITY = 3;
 
         assertTrue(DAO.addItemsToOrder(ID, ITEM, QUANTITY));
+    }
+
+    @Test
+    public void testQuantityOfItemInOrder() {
+        Long orderId = 1L;
+        Long itemId = 1L;
+        int expected = 2;
+
+        assertEquals(expected, DAO.quantityOfItemInOrder(orderId, itemId));
+    }
+
+    @Test
+    public void testReturnItemsToStock() { // this just tests if method runs ok - not the outcome
+                                           // due to DAO interaction issues
+        Long orderId = 1L;
+
+        assertNotNull(DAO.returnItemsToStock(orderId));
     }
 
     @Test

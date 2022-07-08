@@ -28,7 +28,7 @@ public class IMS {
 		final JoinedOrderDAO joinedDAO = new JoinedOrderDAO();
 		this.customers = new CustomerController(custDAO, utils);
 		this.items = new ItemController(itemDAO, utils);
-		this.orders = new OrderController(orderDAO, basketDAO, joinedDAO,  utils);
+		this.orders = new OrderController(orderDAO, basketDAO, joinedDAO, itemDAO,  utils);
 	}
 
 	public void imsSystem() {
