@@ -1,68 +1,75 @@
-Coverage: 34%
-# Project Title
+# ims
 
-One Paragraph of project description goes here
+ims is an inventory management system that allows the user to create, read, update and delete 
+customers, items and orders from a MySQL database.  
+  
+The application is written in Java and MySQL, with Maven being used as a dependency management and build tool. For testing JUnit is used for unit testing, and running the test suite; and Mockito is used for
+integration testing.  
+
+It is accessed through a simple command line interface, with available options being displayed as
+text above the command line prompt.  For this reason further operating instructions are largely unnecessary.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+### Installation
 
-### Prerequisites
+This application can currently be run in two ways:  
+1. By downloading the file ims-0.0.1-jar-with-dependencies.jar from the builds folder, navigating to the 
+file's location on your computer in the command line, then executing the command:  
+  
+  
+`java -jar ims-0.0.1-jar-with-dependencies.jar  `
+  
+This runs a compiled build of the application with all dependencies included.  
 
-What things you need to install the software and how to install them
+2. Alternatively fork and clone this repository, then open in your IDE of choice. The application can be started by 
+running the Runner class script found at:
 
-```
-Give examples
-```
+`src/main/java/com/qa/ims/Runner.java`  
+  
 
-### Installing
 
-A step by step series of examples that tell you how to get a development env running
+        
 
-Say what the step will be
+### Dependencies
 
-```
-Give the example
-```
+The dependencies required to build and run the application are detailed in the 
+`pom.xml` file.  
+  
+Additionally, users require the Java 15 JDK and MySQL installed on their local machine.
 
-And repeat
+### Running the tests
 
-```
-until finished
-```
+Unfortunately, it has not been possible to create a working CI pipeline that automatically
+runs the unit and integration tests.  However, the tests can be run by installing the application
+using option 2 above and running all the tests in the IDE.  
 
-End with an example of getting some data out of the system or using it for a little demo
+Test coverage is currently 61% of lines, a summary can be found in the `additional documents` 
+folder, along with a report of test results derived from the current build version
 
-## Running the tests
+## Additional documentation  
 
-Explain how to run the automated tests for this system. Break down into which tests and what they do
+The `additional documents` folder contains the following documentation for the project:
 
-### Unit Tests 
+* ERDs and UML diagrams from the start and end of the project  
+* Project risk assessment
+* Powerpoint slides for the end of project presentation
+* Test reports -  results of individual tests and the test coverage summary from the current build
 
-Explain what these tests test, why and how to run them
+Further details of the project build can be found on the Jira board for the project at:   
+`https://olly000.atlassian.net/jira/software/projects/IP/boards/4/backlog`  
 
-```
-Give an example
-```
 
-### Integration Tests 
-Explain what these tests test, why and how to run them
 
-```
-Give an example
-```
+### Issues/TODOs
 
-### And coding style tests
+* Resolve Java versioning issue with automated test running in order to create a working CI pipeline
+* Add validation to ItemDAO.amendStockLevel() so that orders with quantities greater than the number in stock
+cannot be created
+* Complete the Extension to CRUD functionality sprint to add useful functions to application
+* Implement user system to introduce greater security and to allow user activity tracking for alterations to the 
+database
 
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
 
 ## Built With
 
@@ -74,16 +81,15 @@ We use [SemVer](http://semver.org/) for versioning.
 
 ## Authors
 
-* **Chris Perrins** - *Initial work* - [christophperrins](https://github.com/christophperrins)
+* **Oliver Stockman** - *Initial project set-up and skeleton created by* - [JHarry444](https://github.com/JHarry444)
 
 ## License
 
 This project is licensed under the MIT license - see the [LICENSE.md](LICENSE.md) file for details 
 
-*For help in [Choosing a license](https://choosealicense.com/)*
+
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+Thanks to Christopher Yiangou, Andrew McCall and my fellow students in the 22JuneEnable1 cohort for
+assistance and support in building this application.
