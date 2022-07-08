@@ -65,7 +65,7 @@ public class OrderController implements CrudController<Order> {
             LOGGER.info("Please enter the quantity of item required");
             int quantity = utils.getInt();
             basketDAO.addItemsToOrder(orderId, itemId, quantity); // adds rows to the OrderBasket table
-            itemDAO.amendStockLevel(itemId, quantity); // amends the stock level in the items table
+            itemDAO.amendStockLevel(itemId, -quantity); // amends the stock level in the items table
             LOGGER.info("Input END to finish adding items, ITEM to add more");
             answer = utils.getString().toUpperCase();
 
